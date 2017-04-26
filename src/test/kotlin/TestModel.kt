@@ -194,12 +194,12 @@ class TestModel {
 
     @Test
     fun testOblivion30Times() {
-        val startFrom = 480
-        testSmallWorld30Times(startFrom, { createOblivion() }, 1.0)
-        testSmallWorld30Times(startFrom, { createOblivion() }, .75)
-        testSmallWorld30Times(startFrom, { createOblivion() }, .5)
-        testSmallWorld30Times(startFrom, { createOblivion() }, .25)
-        println(routes)
+        val startFrom = 1
+        val func = { generateGraph(File("cities_oblivion")) }
+        testSmallWorld30Times(startFrom, { func() }, 1.0)
+        testSmallWorld30Times(startFrom, { func() }, .75)
+        testSmallWorld30Times(startFrom, { func() }, .5)
+        testSmallWorld30Times(startFrom, { func() }, .25)
     }
 
     @Test

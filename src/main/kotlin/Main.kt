@@ -1,11 +1,8 @@
 import org.graphstream.graph.Edge
 import org.graphstream.graph.Node
 import org.graphstream.graph.implementations.SingleGraph
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 import java.util.*
-import java.util.stream.Collectors
 
 /**
  * @author kitttn
@@ -14,17 +11,16 @@ import java.util.stream.Collectors
 val graph = SingleGraph("Test graph")
 var num = 0
 var connNum = 1
-val percentageCommunicating = .01
+val percentageCommunicating = .50
 val chanceToConnect = .01
 val routes = mutableMapOf<Int, MutableList<Int>>()
 var rand = Random(40)
 
 fun main(args: Array<String>) {
-    generateGraph(File("cities_falloutnv"))
+    generateGraph(File("cities_fallout4"))
     graph.display()
     println(routes.toSortedMap())
 
-    // TODO: city to number correspondence
     // TODO: simulation with trust for thesis / journal
     // TODO:
 }
@@ -121,39 +117,38 @@ fun generateGraph(f: File) {
     graph.clear()
     connNum = 1
     rand = Random(40)
-    val buff = BufferedReader(FileReader(f))
+    val buff = Scanner(f)
     val cities = mutableListOf<List<GraphNode>>()
-
-    val allCities = buff.lines().collect(Collectors.toList<String>())
-    allCities += ""
-
-    allCities
-            .filter { it.isNotEmpty() }
-            .forEach { graph.addNode<Node>(it) }
-
-    num = 0
-    val allNodes = allCities
-            .map {
-                val res = GraphNode(num, it)
-                num += if (it.isEmpty()) 0 else 1
-                res
-            }
-
+    var cityName = buff.nextLine()
     val oneTown = mutableListOf<GraphNode>()
-    for (node in allNodes) {
-        if (node.name.isEmpty()) {
+
+    var num = 0
+
+    val addCity = {
+        if (oneTown.size != 0) {
+            oneTown.forEach { graph.addNode<Node>(it.name) }
             cities += oneTown.toList()
             buildCityConnections(oneTown)
             oneTown.clear()
-        } else
-            oneTown += node
+        }
     }
+
+    while (buff.hasNextLine()) {
+        val line = buff.nextLine()
+        if (line.isEmpty()) {
+            addCity()
+            cityName = buff.nextLine()
+        } else {
+            oneTown += GraphNode(num++, line, cityName)
+        }
+    }
+    addCity()
 
     val all = getCommunicatorsFromCities(cities)
     connNum = 0
     //buildCityConnections(all)
     connectCities(all)
-    println(allNodes.map { "${it.id} = ${it.name}" })
+    println(cities.reduce { l1, l2 -> l1 + l2 }.map { "${it.id} = ${it.name} (${it.city})" })
 
     buff.close()
 }
@@ -164,6 +159,6 @@ fun addEdge(from: Int, to: Int) {
     routes[from]?.add(to)
 }
 
-data class GraphNode(val id: Int, val name: String) {
+data class GraphNode(val id: Int, val name: String, val city: String) {
     override fun toString(): String = "{$id}"
 }
