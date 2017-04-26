@@ -4,6 +4,7 @@ import org.graphstream.graph.Edge
 import org.graphstream.graph.Node
 import org.graphstream.graph.implementations.SingleGraph
 import org.junit.Test
+import java.io.File
 import java.util.*
 
 /**
@@ -135,7 +136,8 @@ class TestModel {
 
         val runs = mutableListOf<Int>()
 
-        for (run in 1..1000) {
+        for (run in 1..30) {
+            routes.clear()
             creator()
             val npcs = mutableListOf<Agent>()
             for (i in 0 until routes.size) {
@@ -187,7 +189,7 @@ class TestModel {
         addEdge(445, 122)
         graph.addEdge<Edge>("edge", "122", "445")
 
-        // println(routes)
+        println(routes)
     }
 
     @Test
@@ -211,6 +213,16 @@ class TestModel {
         println(routes)
     }
 
+    @Test
+    fun testSkyrim30Times() {
+        val startFrom = 1
+        val func = { generateGraph(File("cities_skyrim")) }
+        testSmallWorld30Times(startFrom, { func() }, 1.0)
+        testSmallWorld30Times(startFrom, { func() }, .75)
+        testSmallWorld30Times(startFrom, { func() }, .5)
+        testSmallWorld30Times(startFrom, { func() }, .25)
+    }
+
     fun createOblivion() {
         routes.clear()
 
@@ -232,7 +244,7 @@ class TestModel {
             addEdge(from, to)
             addEdge(to, from)
         }
-        // println(routes)
+        println(routes)
     }
 
     @Test
