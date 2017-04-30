@@ -204,8 +204,8 @@ class TestModel {
 
     @Test
     fun testFallout30Times() {
-        val startFrom = 146
-        val func = { createFallout() }
+        val startFrom = 72
+        val func = { generateGraph(File("cities_falloutnv")) }
         testSmallWorld30Times(startFrom, { func() }, 1.0)
         testSmallWorld30Times(startFrom, { func() }, .75)
         testSmallWorld30Times(startFrom, { func() }, .5)
@@ -215,7 +215,7 @@ class TestModel {
 
     @Test
     fun testSkyrim30Times() {
-        val startFrom = 1
+        val startFrom = 262
         val func = { generateGraph(File("cities_skyrim")) }
         testSmallWorld30Times(startFrom, { func() }, 1.0)
         testSmallWorld30Times(startFrom, { func() }, .75)

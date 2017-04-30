@@ -11,13 +11,13 @@ import java.util.*
 val graph = SingleGraph("Test graph")
 var num = 0
 var connNum = 1
-val percentageCommunicating = .50
-val chanceToConnect = .01
+val percentageCommunicating = .35
+val chanceToConnect = 0
 val routes = mutableMapOf<Int, MutableList<Int>>()
 var rand = Random(40)
 
 fun main(args: Array<String>) {
-    generateGraph(File("cities_fallout4"))
+    generateGraph(File("cities_falloutnv"))
     graph.display()
     println(routes.toSortedMap())
 
@@ -126,7 +126,10 @@ fun generateGraph(f: File) {
 
     val addCity = {
         if (oneTown.size != 0) {
-            oneTown.forEach { graph.addNode<Node>(it.name) }
+            oneTown.forEach {
+                val node = graph.addNode<Node>(it.name)
+                node.addAttribute("label", node.index)
+            }
             cities += oneTown.toList()
             buildCityConnections(oneTown)
             oneTown.clear()
@@ -148,7 +151,7 @@ fun generateGraph(f: File) {
     connNum = 0
     //buildCityConnections(all)
     connectCities(all)
-    println(cities.reduce { l1, l2 -> l1 + l2 }.map { "${it.id} = ${it.name} (${it.city})" })
+    // println(cities.reduce { l1, l2 -> l1 + l2 }.map { "${it.id} = ${it.name} (${it.city})" })
 
     buff.close()
 }
