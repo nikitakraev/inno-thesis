@@ -1,3 +1,4 @@
+import org.graphstream.algorithm.generator.RandomGenerator
 import org.graphstream.graph.Edge
 import org.graphstream.graph.Node
 import org.graphstream.graph.implementations.SingleGraph
@@ -11,7 +12,7 @@ import java.util.*
 val graph = SingleGraph("Test graph")
 var num = 0
 var connNum = 1
-val percentageCommunicating = .35
+val percentageCommunicating = .15
 val chanceToConnect = 0
 val routes = mutableMapOf<Int, MutableList<Int>>()
 var rand = Random(40)
@@ -19,7 +20,6 @@ var rand = Random(40)
 fun main(args: Array<String>) {
     generateGraph(File("cities_falloutnv"))
     graph.display()
-    println(routes.toSortedMap())
 
     // TODO: simulation with trust for thesis / journal
     // TODO:
@@ -160,6 +160,29 @@ fun addEdge(from: Int, to: Int) {
     if (routes[from] == null)
         routes[from] = mutableListOf()
     routes[from]?.add(to)
+}
+
+fun createOblivion() {
+    routes.clear()
+
+    val gen = RandomGenerator(6.0)
+    gen.addNodeLabels(true)
+    gen.addSink(graph)
+    gen.setRandomSeed(102)
+    gen.begin()
+
+    for (i in 0..500)
+        gen.nextEvents()
+    gen.end()
+
+    for (i in 0 until graph.edgeCount) {
+        val edge = graph.getEdge<Edge>(i)
+        val from = edge.getSourceNode<Node>().index
+        val to = edge.getTargetNode<Node>().index
+        addEdge(from, to)
+        addEdge(to, from)
+    }
+    println(routes)
 }
 
 data class GraphNode(val id: Int, val name: String, val city: String) {

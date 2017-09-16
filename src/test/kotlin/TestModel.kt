@@ -284,7 +284,6 @@ class TestModel {
             testSmallWorld30Times(1, func, 1 - 0.25 * i)
     }
 
-
     fun everybodyKnows(npcs: List<Agent>, evt: Event): Boolean =
             npcs.map { it.knowsAbout(evt) }.reduce { one, two -> one && two }
 }
